@@ -103,6 +103,10 @@ def process(file, cat, numerical_only, test_size, **kwargs):
         #################### Recreate features ####################
         X = np.concatenate((C, N), axis=1)
 
+    #################### Add Bias ####################
+    bias = np.array([1] * X.shape[0])
+    X = np.concatenate((bias, X), axis=1)
+
     #################### Handling missing response data ####################
     response = mode(y)[0][0]
 
