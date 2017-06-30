@@ -1,21 +1,22 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"Created on 27 Jun 16:05 2017"
+"Created on 30 Jun 10:45 2017"
 "@author: ratnadeepb"
+
 env = "my_code"
 
 import sys
 if env not in sys.path:
     sys.path.append(env)
-from sklearn.linear_model import LinearRegression
-from sklearn import metrics
 from process_v1 import process
 from model_score import adjusted_r_squared
+from sklearn.linear_model import LinearRegression
+from sklearn import metrics
 from sklearn.externals import joblib
 
-def sim_lin_reg(file, save_to):
+def mul_lin_reg(file, save_to):
     """
-    Simple Linear Regression
+    Multiple Linear Regression
     :param file: File containing the data
     :param save_to: File to which the model will be saved
     :return: The adjusted R-squared score and the coefficients of the model
@@ -23,9 +24,8 @@ def sim_lin_reg(file, save_to):
 
     #################### Prepare the file ####################
     X_train, X_test, y_train, y_test, columns, original_tags = process(file,
-                                                                       False,
-                                                                       True, 1/3)
-
+                                                                       True,
+                                                                       True, 1 / 3, rows=[3])
     #################### Building the regressor ####################
     regressor = LinearRegression()
     regressor.fit(X_train, y_train)
@@ -46,9 +46,9 @@ def sim_lin_reg(file, save_to):
     return [coeffs, adj_r2_score]
 
 if __name__ == "__main__":
-    file = "/home/ratnadeepb/app/machine_learning/ml_programming/Data/Salary_Data.csv"
-    save_to = "/home/ratnadeepb/app/machine_learning/ml_programming/saved_models/sim_lin_reg.pkl"
-    l, adj_r2 = sim_lin_reg(file, save_to)
+    file = "/home/ratnadeepb/app/machine_learning/ml_programming/Data/50_Startups.csv"
+    save_to = "/home/ratnadeepb/app/machine_learning/ml_programming/saved_models/mul_lin_reg.pkl"
+    l, adj_r2 = mul_lin_reg(file, save_to)
 
     l2 = []
     for i in l:
