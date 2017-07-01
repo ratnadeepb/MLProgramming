@@ -24,13 +24,14 @@ def exit_err(this):
     sys.exit(-1)
 
 
-def process(file, cat, numerical_only, test_size, **kwargs):
+def process(file, cat, numerical_only, add_bias, test_size, **kwargs):
     """
     Preprocess the data mostly autonomously
     :param file: file name that holds the data
     :param cat: If there are categorical features
     :param numerical_only: If scaling is to be done on numerical data only
     :param test_size: The size of the test data set
+    :param add_bias: If True add the bias column
     :param kwargs - rows: The categorical variable rows.
     :return: [X_train, X_test, y_train, y_test, columns, original_tags]
     """
@@ -104,8 +105,9 @@ def process(file, cat, numerical_only, test_size, **kwargs):
         X = np.concatenate((C, N), axis=1)
 
     #################### Add Bias ####################
-    bias = np.array([1] * X.shape[0])
-    X = np.concatenate((bias, X), axis=1)
+    if add_bias:
+        bias = np.array([1] * X.shape[0])
+        X = np.concatenate((bias, X), axis=1)
 
     #################### Handling missing response data ####################
     response = mode(y)[0][0]

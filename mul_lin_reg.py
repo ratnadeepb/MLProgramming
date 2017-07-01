@@ -25,7 +25,7 @@ def mul_lin_reg(file, save_to):
     #################### Prepare the file ####################
     X_train, X_test, y_train, y_test, columns, original_tags = process(file,
                                                                        True,
-                                                                       True, 1 / 3, rows=[3])
+                                                                       True, True, 1 / 3, rows=[3])
     #################### Building the regressor ####################
     regressor = LinearRegression()
     regressor.fit(X_train, y_train)

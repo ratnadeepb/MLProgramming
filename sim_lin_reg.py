@@ -24,7 +24,7 @@ def sim_lin_reg(file, save_to):
     #################### Prepare the file ####################
     X_train, X_test, y_train, y_test, columns, original_tags = process(file,
                                                                        False,
-                                                                       True, 1/3)
+                                                                       True, True, 1/3)
 
     #################### Building the regressor ####################
     regressor = LinearRegression()
