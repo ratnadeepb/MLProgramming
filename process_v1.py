@@ -85,7 +85,7 @@ def process(file, cat, numerical_only, add_bias, test_size, **kwargs):
         #################### Encoding categorical data ####################
         original_tags = []
         for cl in list(c_cls.values()):
-            original_tags.extend(np.unique(C[:, cl]))
+            original_tags.append(np.unique(C[:, cl]))
             C_labels = LabelEncoder()
             C = C_labels.fit_transform(C[:, cl])
 
@@ -106,7 +106,7 @@ def process(file, cat, numerical_only, add_bias, test_size, **kwargs):
 
     #################### Add Bias ####################
     if add_bias:
-        bias = np.array([1] * X.shape[0])
+        bias = np.ones((X.shape[0], 1))
         X = np.concatenate((bias, X), axis=1)
 
     #################### Handling missing response data ####################
