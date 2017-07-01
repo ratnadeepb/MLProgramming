@@ -23,6 +23,31 @@ def exit_err(this):
     print("Incorrect input: ", this)
     sys.exit(-1)
 
+def column_prep(rows, columns, original_tags):
+    """
+    Prepare the feature names
+    :param rows: Categorical row list
+    :param columns: Column names
+    :param original_tags: Original tags as returned by process
+    :return: Feature names
+    """
+
+    #################### Preparing Columns ####################
+    features = columns.tolist()
+    features.pop(-1)
+    for tag, row in zip(original_tags, rows):
+        features.pop(row)
+        features.insert(row, tag[:-1])
+
+    temp = []
+    for f in features:
+        if isinstance(f, list) or isinstance(f, tuple) or isinstance(f, np.ndarray):
+            temp.extend(f)
+        else:
+            temp.append(f)
+    temp.insert(0, "Bias")
+    return temp
+
 
 def process(file, cat, numerical_only, add_bias, test_size, **kwargs):
     """
@@ -85,24 +110,28 @@ def process(file, cat, numerical_only, add_bias, test_size, **kwargs):
         #################### Encoding categorical data ####################
         original_tags = []
         for cl in list(c_cls.values()):
-            original_tags.append(np.unique(C[:, cl]))
-            C_labels = LabelEncoder()
-            C = C_labels.fit_transform(C[:, cl])
+            if np.unique(C[:, cl]).shape[0] == 1:
+                continue
+            else:
+                original_tags.append(np.unique(C[:, cl]))
+                C_labels = LabelEncoder()
+                C = C_labels.fit_transform(C[:, cl])
+        try:
+            C = C.reshape(C.shape[0], -1)
+            categorical = []
 
-        C = C.reshape(C.shape[0], -1)
+            for cl in list(c_cls.values()):
+                onehotencoder = OneHotEncoder(n_values='auto', categorical_features=[cl])
+                temp = onehotencoder.fit_transform(C[:, cl].reshape(-1, 1)).toarray()
+                temp = np.delete(temp, -1, 1)  # Dropping the last array
+                categorical.extend(temp)
 
-        categorical = []
+            C = np.array(categorical)
 
-        for cl in list(c_cls.values()):
-            onehotencoder = OneHotEncoder(n_values='auto', categorical_features=[cl])
-            temp = onehotencoder.fit_transform(C[:, cl].reshape(-1, 1)).toarray()
-            temp = np.delete(temp, -1, 1)  # Dropping the last array
-            categorical.extend(temp)
-
-        C = np.array(categorical)
-
-        #################### Recreate features ####################
-        X = np.concatenate((C, N), axis=1)
+            #################### Recreate features ####################
+            X = np.concatenate((C, N), axis=1)
+        except NameError:
+            cat = False
 
     #################### Add Bias ####################
     if add_bias:
@@ -126,7 +155,7 @@ def process(file, cat, numerical_only, add_bias, test_size, **kwargs):
 
     #################### Feature Scaling ####################
     sc = StandardScaler()
-    if cat and numerical_only:
+    if numerical_only:
         X_train[:, -N_cl_shape:] = sc.fit_transform(X_train[:, -N_cl_shape:])
         X_test[:, -N_cl_shape:] = sc.transform(X_test[:, -N_cl_shape:])
     else:
