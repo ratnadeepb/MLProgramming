@@ -13,7 +13,7 @@ from process_v1 import process
 from model_score import adjusted_r_squared
 from sklearn.externals import joblib
 
-def sim_lin_reg(file, save_to):
+def sim_lin_reg(file, save_to, rows):
     """
     Simple Linear Regression
     :param file: File containing the data
@@ -22,9 +22,14 @@ def sim_lin_reg(file, save_to):
     """
 
     #################### Prepare the file ####################
-    X_train, X_test, y_train, y_test, columns, original_tags = process(file,
+    if len(rows) == 0:
+        X_train, X_test, y_train, y_test, columns, original_tags = process(file,
                                                                        False,
                                                                        True, True, 1/3)
+    else:
+        X_train, X_test, y_train, y_test, columns, original_tags = process(file,
+                                                                           True,
+                                                                           True, True, 1 / 3, rows=rows)
 
     #################### Building the regressor ####################
     regressor = LinearRegression()
@@ -46,6 +51,7 @@ def sim_lin_reg(file, save_to):
     return [coeffs, adj_r2_score]
 
 if __name__ == "__main__":
+    rows = []
     file = "/home/ratnadeepb/app/machine_learning/ml_programming/Data/Salary_Data.csv"
     save_to = "/home/ratnadeepb/app/machine_learning/ml_programming/saved_models/sim_lin_reg.pkl"
     l, adj_r2 = sim_lin_reg(file, save_to)
