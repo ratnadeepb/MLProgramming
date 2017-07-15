@@ -19,6 +19,7 @@ def mul_lin_reg(file, save_to, rows):
     Multiple Linear Regression
     :param file: File containing the data
     :param save_to: File to which the model will be saved
+    :param rows: rows that are categorical
     :return: The adjusted R-squared score and the coefficients of the model
     """
 

@@ -17,6 +17,14 @@ import statsmodels.formula.api as sm
 import numpy as np
 
 def backward_elim(file, save_to, sl_stay, rows):
+    """
+    Backward Elimination Regression
+    :param file: File containing the data
+    :param save_to: File to which the model will be saved
+    :param sl_stay: The threshold p-value
+    :param rows: rows that are categorical
+    :return: The adjusted R-squared score, the coefficients of the model and the remaining feature list
+    """
     #################### Prepare the file ####################
     if len(rows) == 0:
         X_train, X_test, y_train, y_test, columns, original_tags = process(file,
